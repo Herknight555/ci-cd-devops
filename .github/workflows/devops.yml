@@ -1,0 +1,35 @@
+name: DevOps Pipeline
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+jobs:
+  build_run_deploy_sim:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t mi-app:${{ github.sha }} ./Seman1ACT_Class
+
+      - name: Run Docker container
+        run: docker run -d --name mi-app-container -p 8080:80 mi-app:${{ github.sha }}
+
+      - name: Verify app is up
+        run: |
+          sleep 5
+          curl --fail http://localhost:8080
+
+      - name: Simulate deployment
+        run: |
+          echo "Simulating deployment to production..."
+          echo "Image mi-app:${{ github.sha }} is ready to deploy."
+          echo "Deployment simulation completed successfully."
+
+      - name: Cleanup container
+        if: always()
+        run: docker rm -f mi-app-container
