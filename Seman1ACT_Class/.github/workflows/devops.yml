@@ -1,0 +1,19 @@
+name: DevOps Pipeline
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clonar repo
+        uses: actions/checkout@v3
+
+      - name: Construir imagen Docker
+        run: docker build -t mi-app .
+
+      - name: Ejecutar contenedor
+        run: docker run -d -p 80:80 --name mi-app-container mi-app
